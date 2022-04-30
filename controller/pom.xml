@@ -37,6 +37,16 @@
       <artifactId>core-stock</artifactId>
       <version>${parent.version}</version>
     </dependency>
+      <dependency>
+          <groupId>org.junit.jupiter</groupId>
+          <artifactId>junit-jupiter</artifactId>
+          <version>5.8.2</version>
+      </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>5.2.6.RELEASE</version>
+    </dependency>
   </dependencies>
 
   <build>
