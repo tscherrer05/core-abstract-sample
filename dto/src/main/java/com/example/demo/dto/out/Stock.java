@@ -12,9 +12,9 @@ import java.util.List;
 @JsonDeserialize(builder = Stock.StockBuilder.class)
 public class Stock {
 
-    public Stock(State state, List<Category> categories) {
+    public Stock(State state, List<Category> shoes) {
         this.state = state;
-        this.categories = categories;
+        this.shoes = shoes;
     }
 
     public enum State {
@@ -24,7 +24,7 @@ public class Stock {
     }
 
     public State     state;
-    public List<Category> categories;
+    public List<Category> shoes;
 
     @JsonPOJOBuilder(withPrefix = "")
     public static class StockBuilder {

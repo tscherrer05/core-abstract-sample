@@ -11,22 +11,7 @@ import java.math.BigInteger;
 @Builder
 @JsonDeserialize(builder = Category.class)
 public class Category {
-    Shoe shoe;
+    ShoeFilter.Color color;
+    BigInteger size;
     Integer quantity;
-
-    public ShoeFilter.Color getColor() {
-        return shoe.getColor();
-    }
-
-    public String getName() {
-        return shoe.getName();
-    }
-
-    public BigInteger getSize() {
-        return shoe.getSize();
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
 }

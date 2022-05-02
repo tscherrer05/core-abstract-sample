@@ -36,12 +36,10 @@ public class ShoeShopCoreImpl extends AbstractShoeShopCore {
                         sizes.forEach((size, shoes) ->
                                 categories.add(
                                         Category.builder()
-                                            .shoe(Shoe.builder()
                                             .color(ShoeFilter.Color.valueOf(color))
                                             .size(size)
-                                            .build())
-                                        .quantity(shoes.size())
-                                        .build())));
+                                            .quantity(shoes.size())
+                                            .build())));
 
         var stockState = Stock.State.EMPTY;
         if(stockCount == fullStockLimit)

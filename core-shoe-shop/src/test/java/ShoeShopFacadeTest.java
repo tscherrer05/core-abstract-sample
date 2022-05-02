@@ -40,6 +40,10 @@ public class ShoeShopFacadeTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    private ShoeShopCore getShoeShopCore(Integer apiVersion) throws NotSupportedException {
+        return shoeShopFacade.get(apiVersion);
+    }
+
     @Test
     void unsupportedVersion() {
         assertThrows(NotSupportedException.class, () -> getShoeShopCore(1));
@@ -56,11 +60,7 @@ public class ShoeShopFacadeTest {
 
         // Assert
         assertEquals(Stock.State.EMPTY, stock.getState());
-        assertEquals(Collections.emptyList(), stock.getCategories());
-    }
-
-    private ShoeShopCore getShoeShopCore(Integer apiVersion) throws NotSupportedException {
-        return shoeShopFacade.get(apiVersion);
+        assertEquals(Collections.emptyList(), stock.getShoes());
     }
 
     @Test
@@ -74,8 +74,8 @@ public class ShoeShopFacadeTest {
 
         // Assert
         assertEquals(Stock.State.FULL, stock.getState());
-        assertTrue(stock.getCategories().stream().findFirst().isPresent());
-        var category = stock.getCategories().stream().findFirst().get();
+        assertTrue(stock.getShoes().stream().findFirst().isPresent());
+        var category = stock.getShoes().stream().findFirst().get();
         assertEquals(30, category.getQuantity());
         assertEquals(ShoeFilter.Color.BLACK, category.getColor());
         assertEquals(BigInteger.valueOf(40), category.getSize());
@@ -100,8 +100,8 @@ public class ShoeShopFacadeTest {
 
         // Assert
         assertEquals(Stock.State.FULL, stock.getState());
-        assertEquals(3, stock.getCategories().size());
-        assertEquals(10, stock.getCategories().stream().filter(q -> q.getColor().equals(ShoeFilter.Color.BLUE)).findFirst().get().getQuantity());
+        assertEquals(3, stock.getShoes().size());
+        assertEquals(10, stock.getShoes().stream().filter(q -> q.getColor().equals(ShoeFilter.Color.BLUE)).findFirst().get().getQuantity());
     }
 
     @Test
@@ -121,9 +121,9 @@ public class ShoeShopFacadeTest {
 
         // Assert
         assertEquals(Stock.State.SOME, stock.getState());
-        assertEquals(2, stock.getCategories().size());
-        assertEquals(5, stock.getCategories().stream().filter(q -> q.getColor().equals(ShoeFilter.Color.BLACK)).findFirst().get().getQuantity());
-        assertEquals(24, stock.getCategories().stream().filter(q -> q.getColor().equals(ShoeFilter.Color.BLUE)).findFirst().get().getQuantity());
+        assertEquals(2, stock.getShoes().size());
+        assertEquals(5, stock.getShoes().stream().filter(q -> q.getColor().equals(ShoeFilter.Color.BLACK)).findFirst().get().getQuantity());
+        assertEquals(24, stock.getShoes().stream().filter(q -> q.getColor().equals(ShoeFilter.Color.BLUE)).findFirst().get().getQuantity());
     }
 
 }

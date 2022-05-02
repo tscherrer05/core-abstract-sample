@@ -10,21 +10,18 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import javax.sql.DataSource;
 
 @Configuration
-public class Config {
+public class DatabaseConfig {
     @Bean
     public DataSource dataSource() {
         EmbeddedDatabaseBuilder builder = new EmbeddedDatabaseBuilder();
-        EmbeddedDatabase db = builder.setType(EmbeddedDatabaseType.HSQL)
+        return builder.setType(EmbeddedDatabaseType.HSQL)
                 .addScript("classpath:schema.sql")
                 .addScript("classpath:data.sql")
                 .build();
-        return db;
     }
 
     @Bean
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-
-        return jdbcTemplate;
+        return new JdbcTemplate(dataSource);
     }
 }

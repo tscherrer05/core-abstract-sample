@@ -10,9 +10,8 @@ public class ShoeRowMapper implements RowMapper<ShoeEntity> {
     @Override
     public ShoeEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
         return ShoeEntity.builder()
-                .id(rs.getLong("SHOE_ID"))
-                .name(rs.getString("SHOE_NAME"))
-                .color(rs.getString("SHOE_COLOR"))
-                .size(rs.getBigDecimal("SHOE_SIZE").toBigInteger()).build();
+                .id(rs.getLong("id"))
+                .color(rs.getString("color"))
+                .size(rs.getBigDecimal("size").toBigInteger()).build();
     }
 }

@@ -14,6 +14,6 @@ public class EmbeddedDatabaseAdapter implements DatabaseAdapter {
 
     @Override
     public List<ShoeEntity> getAllShoes() {
-        return null;
+        return jdbcTemplate.query("select * from shoe", new ShoeRowMapper());
     }
 }
