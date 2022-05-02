@@ -5,17 +5,14 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class ShoeRowMapper implements RowMapper<Shoe> {
+public class ShoeRowMapper implements RowMapper<ShoeEntity> {
 
     @Override
-    public Shoe mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Shoe shoe = new Shoe();
-
-        shoe.setId(rs.getLong("SHOE_ID"));
-        shoe.setName(rs.getString("SHOE_NAME"));
-        shoe.setColor(rs.getString("SHOE_COLOR"));
-        shoe.setSize(rs.getBigDecimal("SHOE_SIZE").toBigInteger());
-
-        return shoe;
+    public ShoeEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+        return ShoeEntity.builder()
+                .id(rs.getLong("SHOE_ID"))
+                .name(rs.getString("SHOE_NAME"))
+                .color(rs.getString("SHOE_COLOR"))
+                .size(rs.getBigDecimal("SHOE_SIZE").toBigInteger()).build();
     }
 }

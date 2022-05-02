@@ -144,7 +144,7 @@ So the whole point here is again to make your controller implementation agnostic
 
 ```java
 @Controller
-@RequestMapping(path = "/shoes")
+@RequestMapping(path = "/shoeEntities")
 @RequiredArgsConstructor
 public class ShoeController {
 
@@ -352,13 +352,13 @@ mvn clean package && \
 To test version 1, you can call:
 
 ```shell script
-curl -X GET "http://localhost:8080/shoes/search" -H "version: 1"
+curl -X GET "http://localhost:8080/shoeEntities/search" -H "version: 1"
 ```
 
 which should answer (see `com.example.demo.core.ShoeCoreLegacy.search`):
 
 ```json
-{"shoes":[{"name":"Legacy shoe","size":1,"color":"BLUE"}]}
+{"shoeEntities":[{"name":"Legacy shoe","size":1,"color":"BLUE"}]}
 ```
 
 ## Version 2
@@ -366,13 +366,13 @@ which should answer (see `com.example.demo.core.ShoeCoreLegacy.search`):
 To test version 2, you can call:
 
 ```shell script
-curl -X GET "http://localhost:8080/shoes/search" -H "version: 2"
+curl -X GET "http://localhost:8080/shoeEntities/search" -H "version: 2"
 ```
 
 which should answer (see `com.example.demo.core.ShoeCoreNew.search`):
 
 ```json
-{"shoes":[{"name":"New shoe","size":2,"color":"BLACK"}]}
+{"shoeEntities":[{"name":"New shoe","size":2,"color":"BLACK"}]}
 ```
 
 # Conclusion

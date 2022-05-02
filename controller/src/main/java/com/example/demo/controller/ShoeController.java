@@ -1,14 +1,11 @@
 package com.example.demo.controller;
 
-import com.example.demo.core.ShoeCoreStock;
-import com.example.demo.core.ShoeShopCore;
 import com.example.demo.dto.in.ShoeFilter;
 import com.example.demo.dto.out.Shoes;
 import com.example.demo.dto.out.Stock;
 import com.example.demo.facade.ShoeFacade;
 import com.example.demo.facade.ShoeShopFacade;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

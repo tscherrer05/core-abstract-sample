@@ -1,8 +1,19 @@
 package com.example.demo.core;
 
+import lombok.Builder;
+
 import java.math.BigInteger;
 
-public class Shoe {
+@Builder
+public class ShoeEntity {
+
+    public ShoeEntity(Long id, String name, String color, BigInteger size) {
+        this.id = id;
+        this.name = name;
+        this.color = color;
+        this.size = size;
+    }
+
     private Long id;
     private String name;
     private String color;
