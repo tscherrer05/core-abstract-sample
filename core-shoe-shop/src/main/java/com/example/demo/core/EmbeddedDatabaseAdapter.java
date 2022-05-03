@@ -21,18 +21,19 @@ public class EmbeddedDatabaseAdapter implements DatabaseAdapter {
 
     @Override
     public int countShoes() {
-        return jdbcTemplate.queryForObject("select count(*) from shoe", Integer.class);
+        var result = jdbcTemplate.queryForObject("select count(*) from shoe", Integer.class);
+        return (result != null) ? result : 0;
     }
 
     @Override
     public void saveShoe(ShoeFilter.Color color, BigInteger size) {
-        var query = String.format("insert into shoe (color, size) values %s, %s", color, size);
+        var query = String.format("insert into shoe (color, size) values '%s', %s", color, size);
         jdbcTemplate.execute(query);
     }
 
     @Override
     public void removeShoe(ShoeFilter.Color color, BigInteger size) {
-        var query = String.format("delete from shoe where id in (select top(1) id from shoe where color = %s and size = %s)", color, size);
+        var query = String.format("delete from shoe where id in (select id from shoe where color = '%s' and size = %s limit 1)", color, size);
         jdbcTemplate.execute(query);
     }
 }

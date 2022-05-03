@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.in.ShoeFilter;
+import com.example.demo.dto.in.StockUpdate;
 import com.example.demo.dto.out.Shoes;
 import com.example.demo.dto.out.Stock;
 import com.example.demo.facade.ShoeFacade;
@@ -9,9 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.NotSupportedException;
 
@@ -40,6 +39,17 @@ public class ShoeController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+  }
+
+  @PatchMapping(path = "/stock")
+  public ResponseEntity<HttpStatus> patch(@RequestBody StockUpdate stockUpdate, @RequestHeader Integer version){
+    try {
+      shoeShopFacade.get(version).updateStock(stockUpdate);
+      return ResponseEntity.ok(HttpStatus.OK);
+    } catch (NotSupportedException e) {
+      e.printStackTrace();
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
   }
 
 }
