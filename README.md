@@ -20,5 +20,6 @@ Retirer 10 chaussures noires de taille 42 :
 
 - Utiliser un ORM pour générer les requêtes SQL
 - Automatiser les tests du EmbeddedDatabaseAdapter
+- Factoriser le code des façades
 - Meilleur retours de l’API en cas d’erreur (limite atteinte, stock épuisé)
 - Validation input des paramètres de l’API
