@@ -1,18 +1,21 @@
 package com.example.demo.core;
 
 import com.example.demo.dto.in.ShoeFilter;
+import com.example.demo.dto.in.StockUpdate;
 import com.example.demo.dto.out.Category;
-import com.example.demo.dto.out.Shoe;
 import com.example.demo.dto.out.Shoes;
 import com.example.demo.dto.out.Stock;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.groupingBy;
 
 @Implementation(version = 3)
 public class ShoeShopCoreImpl extends AbstractShoeShopCore {
+
+    private static final int fullStockLimit = 30;
 
     @Autowired
     private DatabaseAdapter databaseAdapter;
@@ -26,7 +29,6 @@ public class ShoeShopCoreImpl extends AbstractShoeShopCore {
     public Stock getStock() {
         var currentAvailableShoes = databaseAdapter.getAllShoes();
         var stockCount = currentAvailableShoes.size();
-        var fullStockLimit = 30;
         var categories = new ArrayList<Category>();
 
         currentAvailableShoes
@@ -49,5 +51,14 @@ public class ShoeShopCoreImpl extends AbstractShoeShopCore {
             stockState = Stock.State.SOME;
 
         return new Stock(stockState, categories);
+    }
+
+    @Override
+    public void updateStock(StockUpdate stockUpdate) {
+        if(databaseAdapter.countShoes() == fullStockLimit) return;
+        if(stockUpdate.quantity > 0)
+            IntStream.range(0, stockUpdate.quantity).forEach(i -> databaseAdapter.saveShoe(stockUpdate.color, stockUpdate.size));
+        else
+            IntStream.range(stockUpdate.quantity, 0).forEach(i -> databaseAdapter.removeShoe(stockUpdate.color, stockUpdate.size));
     }
 }

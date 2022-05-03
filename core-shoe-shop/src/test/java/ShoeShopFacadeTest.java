@@ -2,8 +2,10 @@ import com.example.demo.core.DatabaseAdapter;
 import com.example.demo.core.ShoeEntity;
 import com.example.demo.core.ShoeShopCore;
 import com.example.demo.dto.in.ShoeFilter;
+import com.example.demo.dto.in.StockUpdate;
 import com.example.demo.dto.out.Stock;
 import com.example.demo.facade.ShoeShopFacade;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
@@ -40,6 +42,9 @@ public class ShoeShopFacadeTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    @AfterEach
+    public void cleanUp() { reset(databaseAdapter); }
+
     private ShoeShopCore getShoeShopCore(Integer apiVersion) throws NotSupportedException {
         return shoeShopFacade.get(apiVersion);
     }
@@ -56,7 +61,7 @@ public class ShoeShopFacadeTest {
         when(databaseAdapter.getAllShoes()).thenReturn(Collections.emptyList());
 
         // Act
-        Stock stock = getShoeShopCore(apiVersion).getStock();
+        var stock = getShoeShopCore(apiVersion).getStock();
 
         // Assert
         assertEquals(Stock.State.EMPTY, stock.getState());
@@ -66,11 +71,11 @@ public class ShoeShopFacadeTest {
     @Test
     void getFullStock_OneCategory() throws NotSupportedException {
         // Arrange
-        ShoeEntity.ShoeEntityBuilder shoeBuilder = ShoeEntity.builder().color("BLACK").size(BigInteger.valueOf(40));
+        var shoeBuilder = ShoeEntity.builder().color("BLACK").size(BigInteger.valueOf(40));
         when(databaseAdapter.getAllShoes()).thenReturn(Collections.nCopies(30, shoeBuilder.build()));
 
         // Act
-        Stock stock = getShoeShopCore(apiVersion).getStock();
+        var stock = getShoeShopCore(apiVersion).getStock();
 
         // Assert
         assertEquals(Stock.State.FULL, stock.getState());
@@ -84,9 +89,9 @@ public class ShoeShopFacadeTest {
     @Test
     void getFullStock_MultipleCategories() throws NotSupportedException {
         // Arrange
-        ShoeEntity.ShoeEntityBuilder shoeBuilder1 = ShoeEntity.builder().color("BLACK").size(BigInteger.valueOf(40));
-        ShoeEntity.ShoeEntityBuilder shoeBuilder2 = ShoeEntity.builder().color("BLUE").size(BigInteger.valueOf(40));
-        ShoeEntity.ShoeEntityBuilder shoeBuilder3 = ShoeEntity.builder().color("BLACK").size(BigInteger.valueOf(41));
+        var shoeBuilder1 = ShoeEntity.builder().color("BLACK").size(BigInteger.valueOf(40));
+        var shoeBuilder2 = ShoeEntity.builder().color("BLUE").size(BigInteger.valueOf(40));
+        var shoeBuilder3 = ShoeEntity.builder().color("BLACK").size(BigInteger.valueOf(41));
 
         List<ShoeEntity> shoeEntities = new ArrayList<>();
         shoeEntities.addAll(Collections.nCopies(10, shoeBuilder1.build()));
@@ -96,7 +101,7 @@ public class ShoeShopFacadeTest {
         when(databaseAdapter.getAllShoes()).thenReturn(shoeEntities);
 
         // Act
-        Stock stock = getShoeShopCore(apiVersion).getStock();
+        var stock = getShoeShopCore(apiVersion).getStock();
 
         // Assert
         assertEquals(Stock.State.FULL, stock.getState());
@@ -107,8 +112,8 @@ public class ShoeShopFacadeTest {
     @Test
     void getSomeStock() throws NotSupportedException {
         // Arrange
-        ShoeEntity.ShoeEntityBuilder shoeBuilder1 = ShoeEntity.builder().color("BLACK").size(BigInteger.valueOf(40));
-        ShoeEntity.ShoeEntityBuilder shoeBuilder2 = ShoeEntity.builder().color("BLUE").size(BigInteger.valueOf(43));
+        var shoeBuilder1 = ShoeEntity.builder().color("BLACK").size(BigInteger.valueOf(40));
+        var shoeBuilder2 = ShoeEntity.builder().color("BLUE").size(BigInteger.valueOf(43));
 
         List<ShoeEntity> shoeEntities = new ArrayList<>();
         shoeEntities.addAll(Collections.nCopies(5, shoeBuilder1.build()));
@@ -117,13 +122,89 @@ public class ShoeShopFacadeTest {
         when(databaseAdapter.getAllShoes()).thenReturn(shoeEntities);
 
         // Act
-        Stock stock = getShoeShopCore(apiVersion).getStock();
+        var stock = getShoeShopCore(apiVersion).getStock();
 
         // Assert
         assertEquals(Stock.State.SOME, stock.getState());
         assertEquals(2, stock.getShoes().size());
         assertEquals(5, stock.getShoes().stream().filter(q -> q.getColor().equals(ShoeFilter.Color.BLACK)).findFirst().get().getQuantity());
         assertEquals(24, stock.getShoes().stream().filter(q -> q.getColor().equals(ShoeFilter.Color.BLUE)).findFirst().get().getQuantity());
+    }
+
+    @Test
+    void updateStock_AddOneModel() throws NotSupportedException {
+        // Arrange
+        var stockUpdate = StockUpdate.builder().size(BigInteger.valueOf(42)).color(ShoeFilter.Color.BLACK).quantity(1).build();
+
+        // Act
+        getShoeShopCore(apiVersion).updateStock(stockUpdate);
+
+        // Assert
+        verify(databaseAdapter, times(1)).saveShoe(ShoeFilter.Color.BLACK, BigInteger.valueOf(42));
+    }
+
+    @Test
+    void updateStock_AddMultipleModels() throws NotSupportedException {
+        // Arrange
+        var stockUpdate = StockUpdate.builder().size(BigInteger.valueOf(42)).color(ShoeFilter.Color.BLACK).quantity(2).build();
+
+        // Act
+        getShoeShopCore(apiVersion).updateStock(stockUpdate);
+
+        // Assert
+        verify(databaseAdapter, times(2)).saveShoe(ShoeFilter.Color.BLACK, BigInteger.valueOf(42));
+    }
+
+    @Test
+    void updateStock_ShopLimitReached() throws NotSupportedException {
+        // Arrange
+        when(databaseAdapter.countShoes()).thenReturn(30);
+        var stockUpdate = StockUpdate.builder().size(BigInteger.valueOf(42)).color(ShoeFilter.Color.BLACK).quantity(1).build();
+
+        // Act
+        getShoeShopCore(apiVersion).updateStock(stockUpdate);
+
+        // Assert
+        verify(databaseAdapter, never()).saveShoe(any(), any());
+    }
+
+    @Test
+    void updateStock_RemoveOneModel() throws NotSupportedException {
+        // Arrange
+        var stockUpdate = StockUpdate.builder().size(BigInteger.valueOf(42)).color(ShoeFilter.Color.BLACK).quantity(-1).build();
+
+        // Act
+        getShoeShopCore(apiVersion).updateStock(stockUpdate);
+
+        // Assert
+        verify(databaseAdapter, never()).saveShoe(any(), any());
+        verify(databaseAdapter, times(1)).removeShoe(ShoeFilter.Color.BLACK, BigInteger.valueOf(42));
+    }
+
+    @Test
+    void updateStock_RemoveMultipleModels() throws NotSupportedException {
+        // Arrange
+        var stockUpdate = StockUpdate.builder().size(BigInteger.valueOf(42)).color(ShoeFilter.Color.BLACK).quantity(-2).build();
+
+        // Act
+        getShoeShopCore(apiVersion).updateStock(stockUpdate);
+
+        // Assert
+        verify(databaseAdapter, never()).saveShoe(any(), any());
+        verify(databaseAdapter, times(2)).removeShoe(ShoeFilter.Color.BLACK, BigInteger.valueOf(42));
+    }
+
+    @Test
+    void updateStock_NoQuantity() throws NotSupportedException {
+        // Arrange
+        var stockUpdate = StockUpdate.builder().size(BigInteger.valueOf(42)).color(ShoeFilter.Color.BLACK).quantity(0).build();
+
+        // Act
+        getShoeShopCore(apiVersion).updateStock(stockUpdate);
+
+        // Assert
+        verify(databaseAdapter, never()).saveShoe(any(), any());
+        verify(databaseAdapter, never()).removeShoe(any(), any());
     }
 
 }

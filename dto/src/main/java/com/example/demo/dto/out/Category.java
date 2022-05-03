@@ -13,5 +13,5 @@ import java.math.BigInteger;
 public class Category {
     ShoeFilter.Color color;
     BigInteger size;
-    Integer quantity;
+    int quantity;
 }
