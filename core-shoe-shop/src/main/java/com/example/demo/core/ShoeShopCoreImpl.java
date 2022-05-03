@@ -56,9 +56,10 @@ public class ShoeShopCoreImpl extends AbstractShoeShopCore {
     @Override
     public void updateStock(StockUpdate stockUpdate) {
         if(databaseAdapter.countShoes() == fullStockLimit) return;
+        var modelCount = databaseAdapter.countShoes(stockUpdate.color, stockUpdate.size);
         if(stockUpdate.quantity > 0)
             IntStream.range(0, stockUpdate.quantity).forEach(i -> databaseAdapter.saveShoe(stockUpdate.color, stockUpdate.size));
-        else
+        else if(modelCount >= -stockUpdate.quantity)
             IntStream.range(stockUpdate.quantity, 0).forEach(i -> databaseAdapter.removeShoe(stockUpdate.color, stockUpdate.size));
     }
 }

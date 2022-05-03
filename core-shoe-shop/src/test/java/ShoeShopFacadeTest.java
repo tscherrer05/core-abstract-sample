@@ -169,29 +169,50 @@ public class ShoeShopFacadeTest {
     }
 
     @Test
-    void updateStock_RemoveOneModel() throws NotSupportedException {
+    void updateStock_RemoveTooMuch() throws NotSupportedException {
         // Arrange
+        when(databaseAdapter.countShoes()).thenReturn(0);
+        when(databaseAdapter.countShoes(any(), any())).thenReturn(0);
+
         var stockUpdate = StockUpdate.builder().size(BigInteger.valueOf(42)).color(ShoeFilter.Color.BLACK).quantity(-1).build();
 
         // Act
         getShoeShopCore(apiVersion).updateStock(stockUpdate);
 
         // Assert
+        verify(databaseAdapter, never()).removeShoe(any(), any());
         verify(databaseAdapter, never()).saveShoe(any(), any());
-        verify(databaseAdapter, times(1)).removeShoe(ShoeFilter.Color.BLACK, BigInteger.valueOf(42));
     }
 
     @Test
-    void updateStock_RemoveMultipleModels() throws NotSupportedException {
+    void updateStock_RemoveOneModel() throws NotSupportedException {
         // Arrange
-        var stockUpdate = StockUpdate.builder().size(BigInteger.valueOf(42)).color(ShoeFilter.Color.BLACK).quantity(-2).build();
+        var color = ShoeFilter.Color.BLACK;
+        var size = BigInteger.valueOf(42);
+        when(databaseAdapter.countShoes(color, size)).thenReturn(1);
+        var stockUpdate = StockUpdate.builder().size(size).color(color).quantity(-1).build();
 
         // Act
         getShoeShopCore(apiVersion).updateStock(stockUpdate);
 
         // Assert
         verify(databaseAdapter, never()).saveShoe(any(), any());
-        verify(databaseAdapter, times(2)).removeShoe(ShoeFilter.Color.BLACK, BigInteger.valueOf(42));
+        verify(databaseAdapter, times(1)).removeShoe(color, size);
+    }
+
+    @Test
+    void updateStock_RemoveMultipleModels() throws NotSupportedException {
+        // Arrange
+        var color = ShoeFilter.Color.BLACK;
+        var size = BigInteger.valueOf(42);
+        when(databaseAdapter.countShoes(color, size)).thenReturn(2);
+        var stockUpdate = StockUpdate.builder().size(size).color(color).quantity(-2).build();
+        // Act
+        getShoeShopCore(apiVersion).updateStock(stockUpdate);
+
+        // Assert
+        verify(databaseAdapter, never()).saveShoe(any(), any());
+        verify(databaseAdapter, times(2)).removeShoe(color, size);
     }
 
     @Test

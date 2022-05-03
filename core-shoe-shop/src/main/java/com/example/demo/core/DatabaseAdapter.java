@@ -10,6 +10,8 @@ public interface DatabaseAdapter {
 
     int countShoes();
 
+    int countShoes(ShoeFilter.Color color, BigInteger size);
+
     void saveShoe(ShoeFilter.Color color, BigInteger size);
 
     void removeShoe(ShoeFilter.Color color, BigInteger size);

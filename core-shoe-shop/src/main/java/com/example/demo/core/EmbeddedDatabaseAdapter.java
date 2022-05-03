@@ -26,6 +26,13 @@ public class EmbeddedDatabaseAdapter implements DatabaseAdapter {
     }
 
     @Override
+    public int countShoes(ShoeFilter.Color color, BigInteger size) {
+        var query = String.format("select count(*) from shoe where color = '%s' and size = %s", color, size);
+        var result = jdbcTemplate.queryForObject(query, Integer.class);
+        return (result != null) ? result : 0;
+    }
+
+    @Override
     public void saveShoe(ShoeFilter.Color color, BigInteger size) {
         var query = String.format("insert into shoe (color, size) values '%s', %s", color, size);
         jdbcTemplate.execute(query);
