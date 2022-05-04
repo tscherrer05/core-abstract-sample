@@ -19,7 +19,7 @@ Retirer 10 chaussures noires de taille 42 :
 # Architecture
 
 ## Persistance de données
-Le nouveau Core est situé dans le projet core-shoe-shop. Il embarque une base de données HSQL. Pour les besoins de l'exercice, elle est initialisée et seedée à chaque lancement de l'application.
+Le nouveau Core est situé dans le projet core-shoe-shop. Il embarque une base de données HSQL (http://hsqldb.org/). Pour les besoins de l'exercice, elle est initialisée et seedée à chaque lancement de l'application.
 
 L'interface DatabaseAdapter permet de découpler le code d'accès aux données de la logique métier, en plus de pouvoir être mockée dans les tests automatiques.
 
