@@ -4,7 +4,7 @@ import com.example.demo.core.ShoeShopCore;
 import com.example.demo.dto.in.ShoeFilter;
 import com.example.demo.dto.in.StockUpdate;
 import com.example.demo.dto.out.Stock;
-import com.example.demo.facade.ShoeShopFacade;
+import com.example.demo.facade.CommonShoeFacade;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ public class ShoeShopFacadeTest {
     private DatabaseAdapter databaseAdapter;
 
     @Autowired
-    private ShoeShopFacade shoeShopFacade;
+    private CommonShoeFacade shoeShopFacade;
 
     private final Integer apiVersion = 3;
 
