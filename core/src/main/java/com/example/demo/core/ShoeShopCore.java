@@ -8,4 +8,5 @@ public interface ShoeShopCore extends ShoeCore {
     Stock getStock();
 
     void updateStock(StockUpdate stockUpdate);
+
 }

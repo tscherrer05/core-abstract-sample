@@ -24,24 +24,39 @@ public class ShoeController {
 
 
   @GetMapping(path = "/search")
-  public ResponseEntity<Shoes> all(ShoeFilter filter, @RequestHeader Integer version) throws NotSupportedException {
+  public ResponseEntity<Shoes> all(ShoeFilter filter, @RequestHeader Integer version) {
 
-    return ResponseEntity.ok(commonShoeFacade.<ShoeCore>get(version).search(filter));
+      try {
+          return ResponseEntity.ok(commonShoeFacade.<ShoeCore>get(version).search(filter));
+      } catch (NotSupportedException e) {
+          e.printStackTrace();
+          return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+      }
 
   }
 
   @GetMapping(path = "/stock")
-  public ResponseEntity<Stock> get(@RequestHeader Integer version) throws NotSupportedException {
+  public ResponseEntity<Stock> get(@RequestHeader Integer version) {
 
-      return ResponseEntity.ok(commonShoeFacade.<ShoeShopCore>get(version).getStock());
+      try {
+          return ResponseEntity.ok(commonShoeFacade.<ShoeShopCore>get(version).getStock());
+      } catch (NotSupportedException e) {
+          e.printStackTrace();
+          return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+      }
 
   }
 
   @PatchMapping(path = "/stock")
-  public ResponseEntity<HttpStatus> patch(@RequestBody StockUpdate stockUpdate, @RequestHeader Integer version) throws NotSupportedException {
+  public ResponseEntity<HttpStatus> patch(@RequestBody StockUpdate stockUpdate, @RequestHeader Integer version) {
 
-      commonShoeFacade.<ShoeShopCore>get(version).updateStock(stockUpdate);
-      return ResponseEntity.ok(HttpStatus.OK);
+      try {
+          commonShoeFacade.<ShoeShopCore>get(version).updateStock(stockUpdate);
+          return ResponseEntity.ok(HttpStatus.OK);
+      } catch (NotSupportedException e) {
+          e.printStackTrace();
+          return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+      }
 
   }
 
